@@ -1,3 +1,4 @@
+import argparse
 import os
 
 from dotenv import load_dotenv
@@ -5,29 +6,32 @@ from openai import OpenAI
 
 
 def main() -> None:
+    # Get prompt
+    parser = argparse.ArgumentParser(description="Chatbot")
+    parser.add_argument("user_prompt", type=str, help="User prompt")
+    args = parser.parse_args()
+
+    # Configure OpenRouter API
     load_dotenv()
     api_key = os.environ.get("OPENROUTER_API_KEY")
     if not api_key:
         raise RuntimeError("OPENROUTER_API_KEY environment variable not set")
 
-    # Configures & Passes the prompt to OpenRouter
     client = OpenAI(
         base_url="https://openrouter.ai/api/v1",
         api_key=api_key,
     )
+
+    # Pass prompt to OpenRouter
     response = client.chat.completions.create(
         model="openrouter/free",
         messages=[
-            {
-                "role": "user",
-                "content": "Why is Boot.dev such a great place to learn backend development? Use one paragraph maximum.",
-            }
-        ],
+            {"role": "user", "content": args.user_prompt}],
     )
     if not response.usage:
-        raise RuntimeError("Failed API Request")
+        raise RuntimeError("API response appears to be malformed")
 
-    # Prints the result of the prompt
+    # Print result of the prompt
     print(f"Prompt tokens: {response.usage.prompt_tokens}")
     print(f"Response tokens: {response.usage.completion_tokens}")
     print("Response:")
