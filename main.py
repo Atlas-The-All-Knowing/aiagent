@@ -9,6 +9,7 @@ def main() -> None:
     # Get prompt
     parser = argparse.ArgumentParser(description="Chatbot")
     parser.add_argument("user_prompt", type=str, help="User prompt")
+    parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
     args = parser.parse_args()
 
     # Configure OpenRouter API
@@ -24,10 +25,14 @@ def main() -> None:
     messages = [
         {"role": "user", "content": args.user_prompt},
     ]
-    generate_content(client, messages)
+    if args.verbose:
+        print(f"User prompt: {args.user_prompt}\n")
 
-# Pass prompt to OpenRouter, Generate & Return response
-def generate_content(client: OpenAI, messages: list) -> None:
+    generate_content(client, messages, args.verbose)
+
+
+# Pass prompt to OpenRouter, Generate & Print response
+def generate_content(client: OpenAI, messages: list, verbose: bool) -> None:
     response = client.chat.completions.create(
         model="openrouter/free",
         messages=messages,
@@ -35,9 +40,10 @@ def generate_content(client: OpenAI, messages: list) -> None:
     if not response.usage:
         raise RuntimeError("API response appears to be malformed")
 
-    # Print result of the prompt
-    print(f"Prompt tokens: {response.usage.prompt_tokens}")
-    print(f"Response tokens: {response.usage.completion_tokens}")
+    # Print response
+    if verbose:
+        print(f"Prompt tokens: {response.usage.prompt_tokens}")
+        print(f"Response tokens: {response.usage.completion_tokens}")
     print("Response:")
     print(response.choices[0].message.content)
 
