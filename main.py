@@ -21,12 +21,16 @@ def main() -> None:
         base_url="https://openrouter.ai/api/v1",
         api_key=api_key,
     )
+    messages = [
+        {"role": "user", "content": args.user_prompt},
+    ]
+    generate_content(client, messages)
 
-    # Pass prompt to OpenRouter
+# Pass prompt to OpenRouter, Generate & Return response
+def generate_content(client: OpenAI, messages: list) -> None:
     response = client.chat.completions.create(
         model="openrouter/free",
-        messages=[
-            {"role": "user", "content": args.user_prompt}],
+        messages=messages,
     )
     if not response.usage:
         raise RuntimeError("API response appears to be malformed")
