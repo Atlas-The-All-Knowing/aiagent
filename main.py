@@ -10,6 +10,7 @@ def main() -> None:
     if not api_key:
         raise RuntimeError("OPENROUTER_API_KEY environment variable not set")
 
+    # Configures & Passes the prompt to OpenRouter
     client = OpenAI(
         base_url="https://openrouter.ai/api/v1",
         api_key=api_key,
@@ -23,7 +24,12 @@ def main() -> None:
             }
         ],
     )
+    if not response.usage:
+        raise RuntimeError("Failed API Request")
 
+    # Prints the result of the prompt
+    print(f"Prompt tokens: {response.usage.prompt_tokens}")
+    print(f"Response tokens: {response.usage.completion_tokens}")
     print("Response:")
     print(response.choices[0].message.content)
 
