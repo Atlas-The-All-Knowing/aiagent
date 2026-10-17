@@ -11,3 +11,7 @@ wheels/
 
 # Enviromental Variables
 .env
+
+# Code-generated files
+calculator/lorem.txt
+calculator/pkg/morelorem.txt
