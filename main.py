@@ -60,7 +60,7 @@ def generate_content(client: OpenAI, messages: list, verbose: bool) -> None:
     for tool_call in message.tool_calls:
         if tool_call.type != "function":
             continue
-        function_args = json.loads(tool_call.function.argurments or "{}")
+        function_args = json.loads(tool_call.function.arguments or "{}")
         print(f"Calling function: {tool_call.function.name}({function_args})")
 
 
